@@ -7,6 +7,7 @@ Clock your working hours with this app
 For Clock.py:
  - Python3
  - Unix machine to run Clock.py
+ 
 For plot.py:
  - Python3
  - pandas
