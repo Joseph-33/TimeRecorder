@@ -6,7 +6,7 @@ Clock your working hours with this app
 # Requirements:
 For Clock.py:
  - Python3
- - Unix machine to run Clock.py
+ - Unix machine
  
 For plot.py:
  - Python3
