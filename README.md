@@ -1,6 +1,7 @@
 # TimeRecorder
 Clock your working hours with this app
 
+# Draft (Incomplete)
 
 `python3 Clock.py YOUR_LABEL_HERE`
 
@@ -17,5 +18,3 @@ For plot.py:
  - arrow
 
 This will create a file called times.csv
-
-'Not hugely maintained'
