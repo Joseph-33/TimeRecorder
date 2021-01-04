@@ -1,7 +1,7 @@
-# TimeRecorder
+# TimeRecorder Draft (Incomplete)
 Clock your working hours with this app
 
-# Draft (Incomplete)
+
 
 `python3 Clock.py YOUR_LABEL_HERE`
 
