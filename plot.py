@@ -180,7 +180,7 @@ elif not args.plot:
                 print("{}  {:02d}".format(label,int(value_summed)))
 
 else:
-    matplotlib.use('tkagg')
+    #matplotlib.use('tkagg')
     import matplotlib.pyplot as plt
     df_group_stack.plot.bar(stacked = True)
     plt.xlabel("")
