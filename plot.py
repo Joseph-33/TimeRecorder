@@ -1,5 +1,7 @@
+notwork = ['Notwork', 'Nowork', 'Lunch', 'Procrastinate']
 
 exclude_list = ['test','','my_label','test1']
+notwork = notwork + [i.lower() for i in notwork]
 
 
 
@@ -13,11 +15,14 @@ exclude_list = ['test','','my_label','test1']
 
 import pandas as pd
 import copy
+import time
 import arrow
 import datetime
 import argparse
 from numpy.random import uniform
 import matplotlib
+import pdb
+bp = breakpoint
 
 
 parser = argparse.ArgumentParser()
@@ -30,6 +35,7 @@ args = parser.parse_args()
 
 true_list = ['true', '1', 't', 'y', 'yes', 'yeah', 'yup', 'certainly', 'uh-huh']
 label_list = exclude_list
+timezone = time.tzname[time.daylight]
 shift_times = {"weeks":args.weeks, "days": args.days}
 
 if args.format == 'w':
@@ -92,9 +98,24 @@ def stack_format(df_group):
 
     return df3.reset_index().drop(['Total'], axis = 1).groupby('Span').sum()
 
-arrow_lw = arrow.now('Europe/London').shift(**shift_times).floor(span_format)
+def column_positions(labels):
+    """ Function that ensures the columns are aligned properly
+    """
+    labelgaps = {}
+    initstr = "   "
+    for i in range(len(labels)):
+        if i == 0:
+            labelgaps[labels[i]] = initstr 
+        else:
+            labelgaps[labels[i]] = int(len(labels[i-1] ) ) * " "  + "  "
+    return labelgaps
+
+        
+
+
+arrow_lw = arrow.now(timezone).shift(**shift_times).floor(span_format)
 dt_lw = datetime.datetime.strptime(str(arrow_lw),'%Y-%m-%dT%H:%M:%S%z')
-arrow_up = arrow.now('Europe/London').shift(**shift_times).ceil(span_format)
+arrow_up = arrow.now(timezone).shift(**shift_times).ceil(span_format)
 dt_up = datetime.datetime.strptime(str(arrow_up),'%Y-%m-%dT%H:%M:%S.%f%z')
 
 
@@ -120,7 +141,7 @@ df_recent = df_recent[df_recent['start'] < dt_up] # Exclude values after upper l
 df_group = correct_columns(df_recent)
 df_group_stack = stack_format(df_group)
 df_group_stack_sorted_summed = df_group_stack.sum(axis=1)
-df_group_stack_sorted_summed_notnowork = df_group_stack.drop(['notwork'],axis=1, errors='ignore').sum(axis=1)
+df_group_stack_sorted_summed_notnowork = df_group_stack.drop(notwork,axis=1, errors='ignore').sum(axis=1)
 
 
 if len(df_group) < 1:
@@ -141,7 +162,7 @@ elif not args.plot:
         df_group_stack.index = df_group_stack.index.str.strip()
         df_group_stack = df_group_stack.reindex(x_ticks)
         df_group_stack_sorted_summed = df_group_stack.sum(axis=1)
-        df_group_stack_sorted_summed_notnowork = df_group_stack.drop(['notwork'],axis=1, errors='ignore').sum(axis=1)
+        df_group_stack_sorted_summed_notnowork = df_group_stack.drop(notwork,axis=1, errors='ignore').sum(axis=1)
 
 
     if args.fraction:
@@ -149,6 +170,7 @@ elif not args.plot:
         st = ""
         st+="     {:}".format("    ".join(df_group_stack))
         for index, values in df_group_stack.iterrows():
+            gaps = column_positions(values.keys())
             st+="\n{}".format(index)
 
             for key, value in zip(values.keys(),values):
@@ -158,9 +180,10 @@ elif not args.plot:
                     continue
 
                 if args.format == "w":
-                    st += "{:4}:{:02d}".format(int(value),int(value*60 %60))
+                    st += gaps[key] + "{:4}:{:02d}".format(int(value),int(value*60 %60))
                 else:
-                    st+= "    {:02d}".format(int(value))
+                    st+= gaps[key] + "{:02d}".format(int(value))
+         
         print(st)
 
         print("\n    Total notnowork")
