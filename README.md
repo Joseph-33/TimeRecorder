@@ -1,4 +1,4 @@
-# TimeRecorder Draft (Work In Progress)
+# TimeRecorder
 Clock your working hours with this app
 
 
